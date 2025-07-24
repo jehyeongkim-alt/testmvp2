@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>국내 내과/가정의학과 검색</title>
+    <title>국내 내과/가정의학과 검색/title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -404,6 +404,14 @@
             .results-count {
                 font-size: 14px;
             }
+
+            .address-col {
+                display: none;
+            }
+            
+            .website-col {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -642,8 +650,10 @@
                             <th>종별</th>
                             <th>지역</th>
                             <th class="address-col">주소</th>
+                            <th class="website-col">홈페이지</th>
                             <th>전화번호</th>
                             <th>의사수</th>
+                            <th>홈페이지</th>
                             <th>지도</th>
                         </tr>
                     </thead>
@@ -651,6 +661,10 @@
             `;
 
             displayData.forEach(hospital => {
+                const website = hospital.홈페이지 && hospital.홈페이지 !== 'nan' && hospital.홈페이지 !== null
+                    ? `<a href="${hospital.홈페이지}" target="_blank" class="website">방문</a>` 
+                    : '';
+
                 const naverMapUrl = `https://map.naver.com/p/search/${encodeURIComponent(hospital.요양기관명)}?c=7.00,0,0,0,dh`;
 
                 html += `
