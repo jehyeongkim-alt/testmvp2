@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국내 내과/가정의학과 병원 검색</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .search-panel {
+            padding: 40px 30px 30px 30px;
+            background: white;
+        }
+        
+        .main-search {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .main-search label {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-search input {
+            width: 100%;
+            padding: 20px 60px 20px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .main-search input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 20px;
+        }
+        
+        .filters-section {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 25px;
+        }
+        
+        .filters-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .filter-item select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .filter-item select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .results-panel {
+            padding: 30px;
+            background: #fafafa;
+        }
+        
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .results-count {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .results-table {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f5f5f5;
+            vertical-align: top;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .hospital-id {
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .hospital-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .phone {
+            color: #27ae60;
+            font-weight: 500;
+        }
+        
+        .website {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .website:hover {
+            text-decoration: underline;
+        }
+        
+        .map-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #03C75A;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .map-btn:hover {
+            background: #02B352;
+            transform: translateY(-1px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #d32f2f;
+            background: #ffebee;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 30px 0;
+            padding: 20px;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-dots {
+            padding: 8px 4px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-search input {
+                padding: 15px 50px 15px 15px;
+                font-size: 14px;
+            }
+            
+            .search-icon {
+                right: 15px;
+                font-size: 18px;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .page-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>국내 내과/가정의학과 병원 검색</h1>
+            <p id="dataInfo">데이터 로딩 중...</p>
+        </div>
+        
+        <div class="search-panel">
+            <div class="main-search">
+                <label for="hospitalName">병원명 검색</label>
+                <div class="search-input-wrapper">
+                    <input type="text" id="hospitalName" placeholder="병원명을 입력하세요 (예: 서울대병원, 삼성의료원)">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+            
+            <div class="filters-section">
+                <div class="filters-header">필터 옵션</div>
+                <div class="filters-row">
+                    <div class="filter-item">
+                        <label for="sido">시도</label>
+                        <select id="sido">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="sigungu">시군구</label>
+                        <select id="sigungu">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-item">
+                        <label for="hospitalType">병원 종별</label>
+                        <select id="hospitalType">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="searchHospitals()">검색</button>
+                    <button class="btn btn-secondary" onclick="resetSearch()">초기화</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results-panel">
+            <div id="resultsInfo" class="results-info" style="display: none;">
+                <div class="results-count" id="resultCount"></div>
+            </div>
+            
+            <div class="results-table">
+                <div id="loading" class="loading">데이터를 불러오는 중...</div>
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            jsonFileName: 'hospitals.json',
+            itemsPerPage: 50,
+            searchDebounceTime: 300
+        };
+
+        let hospitalData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        let searchTimeout;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadJSONFile();
+            setupEventListeners();
+        });
+
+        async function loadJSONFile() {
+            try {
+                const response = await fetch(CONFIG.jsonFileName);
+                if (!response.ok) {
+                    throw new Error(`파일을 찾을 수 없습니다: ${CONFIG.jsonFileName}`);
+                }
+                
+                let jsonText = await response.text();
+                jsonText = jsonText.replace(/:\s*NaN\s*([,}])/g, ': null$1');
+                
+                hospitalData = JSON.parse(jsonText);
+                filteredData = [...hospitalData];
+                currentPage = 1;
+                
+                setupFilters();
+                displayResults();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dataInfo').textContent = 
+                    `${hospitalData.length.toLocaleString()}개 의료기관 정보`;
+                    
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div class="error">
+                        <h3>파일 로드 오류</h3>
+                        <p>${error.message}</p>
+                        <p>같은 폴더에 <strong>${CONFIG.jsonFileName}</strong> 파일이 있는지 확인해주세요.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('hospitalName').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(searchHospitals, CONFIG.searchDebounceTime);
+            });
+
+            document.getElementById('hospitalName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    clearTimeout(searchTimeout);
+                    searchHospitals();
+                }
+            });
+
+            ['sido', 'sigungu', 'hospitalType'].forEach(id => {
+                document.getElementById(id).addEventListener('change', searchHospitals);
+            });
+
+            document.getElementById('sido').addEventListener('change', updateSigungu);
+        }
+
+        function setupFilters() {
+            const sidoSet = new Set();
+            hospitalData.forEach(hospital => {
+                if (hospital.시도코드명) sidoSet.add(hospital.시도코드명);
+            });
+            
+            const sidoSelect = document.getElementById('sido');
+            sidoSelect.innerHTML = '<option value="">전체</option>';
+            Array.from(sidoSet).sort().forEach(sido => {
+                sidoSelect.innerHTML += `<option value="${sido}">${sido}</option>`;
+            });
+
+            const typeSet = new Set();
+            hospitalData.forEach(hospital => {
+                if (hospital.종별코드명) typeSet.add(hospital.종별코드명);
+            });
+            
+            const typeSelect = document.getElementById('hospitalType');
+            typeSelect.innerHTML = '<option value="">전체</option>';
+            Array.from(typeSet).sort().forEach(type => {
+                typeSelect.innerHTML += `<option value="${type}">${type}</option>`;
+            });
+
+            updateSigungu();
+        }
+
+        function updateSigungu() {
+            const selectedSido = document.getElementById('sido').value;
+            const sigunguSet = new Set();
+            
+            hospitalData.forEach(hospital => {
+                if ((!selectedSido || hospital.시도코드명 === selectedSido) && hospital.시군구코드명) {
+                    sigunguSet.add(hospital.시군구코드명);
+                }
+            });
+            
+            const sigunguSelect = document.getElementById('sigungu');
+            sigunguSelect.innerHTML = '<option value="">전체</option>';
+            Array.from(sigunguSet).sort().forEach(sigungu => {
+                sigunguSelect.innerHTML += `<option value="${sigungu}">${sigungu}</option>`;
+            });
+        }
+
+        function searchHospitals() {
+            const hospitalName = document.getElementById('hospitalName').value.toLowerCase();
+            const sido = document.getElementById('sido').value;
+            const sigungu = document.getElementById('sigungu').value;
+            const hospitalType = document.getElementById('hospitalType').value;
+
+            filteredData = hospitalData.filter(hospital => {
+                if (hospitalName && !hospital.요양기관명.toLowerCase().includes(hospitalName)) {
+                    return false;
+                }
+                
+                if (sido && hospital.시도코드명 !== sido) {
+                    return false;
+                }
+                
+                if (sigungu && hospital.시군구코드명 !== sigungu) {
+                    return false;
+                }
+                
+                if (hospitalType && hospital.종별코드명 !== hospitalType) {
+                    return false;
+                }
+                
+                return true;
+            });
+
+            currentPage = 1;
+            displayResults();
+        }
+
+        function displayResults() {
+            const resultsDiv = document.getElementById('results');
+            const resultCount = document.getElementById('resultCount');
+            const resultsInfo = document.getElementById('resultsInfo');
+            
+            const totalItems = filteredData.length;
+            const totalPages = Math.ceil(totalItems / CONFIG.itemsPerPage);
+            
+            resultCount.innerHTML = `
+                총 ${totalItems.toLocaleString()}개 병원 
+                <span style="color: #666; font-size: 14px; font-weight: normal;">
+                    (${currentPage}/${totalPages} 페이지)
+                </span>
+            `;
+            resultsInfo.style.display = 'block';
+
+            if (totalItems === 0) {
+                resultsDiv.innerHTML = '<div class="loading">검색 결과가 없습니다.</div>';
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * CONFIG.itemsPerPage;
+            const endIndex = Math.min(startIndex + CONFIG.itemsPerPage, totalItems);
+            const displayData = filteredData.slice(startIndex, endIndex);
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>병원명</th>
+                            <th>종별</th>
+                            <th>지역</th>
+                            <th>주소</th>
+                            <th>전화번호</th>
+                            <th>의사수</th>
+                            <th>홈페이지</th>
+                            <th>지도</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            displayData.forEach(hospital => {
+                const website = hospital.병원홈페이지 && hospital.병원홈페이지 !== 'nan' && hospital.병원홈페이지 !== null
+                    ? `<a href="${hospital.병원홈페이지}" target="_blank" class="website">방문</a>` 
+                    : '';
+
+                const naverMapUrl = `https://map.naver.com/p/search/${encodeURIComponent(hospital.요양기관명)}?c=7.00,0,0,0,dh`;
+
+                html += `
+                    <tr>
+                        <td><span class="hospital-id">${hospital['별도 ID'] || hospital.ID || ''}</span></td>
+                        <td class="hospital-name">${hospital.요양기관명}</td>
+                        <td>${hospital.종별코드명}</td>
+                        <td>${hospital.시도코드명} ${hospital.시군구코드명}</td>
+                        <td>${hospital.주소}</td>
+                        <td class="phone">${hospital.전화번호}</td>
+                        <td>${hospital.총의사수 || 0}명</td>
+                        <td>${website}</td>
+                        <td><a href="${naverMapUrl}" target="_blank" class="map-btn">네이버 지도</a></td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            
+            if (totalPages > 1) {
+                html += createPaginationControls(currentPage, totalPages);
+            }
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function createPaginationControls(current, total) {
+            let html = '<div class="pagination">';
+            
+            if (current > 1) {
+                html += `<button class="page-btn" onclick="goToPage(${current - 1})">‹ 이전</button>`;
+            }
+            
+            const startPage = Math.max(1, current - 2);
+            const endPage = Math.min(total, current + 2);
+            
+            if (startPage > 1) {
+                html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) html += '<span class="page-dots">...</span>';
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === current ? 'active' : '';
+                html += `<button class="page-btn ${activeClass}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            
+            if (endPage < total) {
+                if (endPage < total - 1) html += '<span class="page-dots">...</span>';
+                html += `<button class="page-btn" onclick="goToPage(${total})">${total}</button>`;
+            }
+            
+            if (current < total) {
+                html += `<button class="page-btn" onclick="goToPage(${current + 1})">다음 ›</button>`;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            displayResults();
+            
+            document.querySelector('.results-table').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        function resetSearch() {
+            document.getElementById('hospitalName').value = '';
+            document.getElementById('sido').value = '';
+            document.getElementById('sigungu').value = '';
+            document.getElementById('hospitalType').value = '';
+            
+            updateSigungu();
+            filteredData = [...hospitalData];
+            currentPage = 1;
+            displayResults();
+        }
+    </script>
+</body>
+</html>
