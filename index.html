@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>국내 내과/가정의학과 검색</title>
+    <title>병원 검색기</title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -347,7 +347,7 @@
             
             .main-search input {
                 padding: 15px 50px 15px 15px;
-                font-size: 16px; /* iOS 줌 방지 */
+                font-size: 16px;
             }
             
             .search-icon {
@@ -355,8 +355,9 @@
                 font-size: 18px;
             }
             
-            /* 모바일에서 주소 컬럼 숨기기 */
-            .address-col {
+            /* 모바일에서 주소, 홈페이지 컬럼 숨기기 */
+            .address-col,
+            .website-col {
                 display: none;
             }
             
@@ -376,7 +377,7 @@
             
             .btn {
                 padding: 14px 20px;
-                font-size: 16px; /* 터치 친화적 */
+                font-size: 16px;
                 margin: 5px;
             }
             
@@ -394,7 +395,7 @@
             .page-btn {
                 padding: 10px 12px;
                 font-size: 14px;
-                min-width: 44px; /* 터치 최소 크기 */
+                min-width: 44px;
             }
             
             .results-info {
@@ -410,7 +411,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>국내 내과/가정의학과 검색</h1>
+            <h1>🏥 병원 검색기</h1>
             <p id="dataInfo">데이터 로딩 중...</p>
         </div>
         
@@ -644,6 +645,7 @@
                             <th class="address-col">주소</th>
                             <th>전화번호</th>
                             <th>의사수</th>
+                            <th class="website-col">홈페이지</th>
                             <th>지도</th>
                         </tr>
                     </thead>
@@ -651,6 +653,10 @@
             `;
 
             displayData.forEach(hospital => {
+                const website = hospital.병원홈페이지 && hospital.병원홈페이지 !== 'nan' && hospital.병원홈페이지 !== null
+                    ? `<a href="${hospital.병원홈페이지}" target="_blank" class="website">방문</a>` 
+                    : '';
+
                 const naverMapUrl = `https://map.naver.com/p/search/${encodeURIComponent(hospital.요양기관명)}?c=7.00,0,0,0,dh`;
 
                 html += `
