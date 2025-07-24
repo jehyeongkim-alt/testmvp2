@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>국내 내과/가정의학과 병원 검색</title>
+    <title>국내 내과/가정의학과 검색</title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -188,13 +188,15 @@
             background: white;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
+            min-width: 600px;
         }
         
         th {
@@ -205,6 +207,7 @@
             border-bottom: 1px solid #e0e0e0;
             font-size: 13px;
             color: #555;
+            white-space: nowrap;
         }
         
         td {
@@ -229,11 +232,13 @@
         .hospital-name {
             font-weight: 600;
             color: #2c3e50;
+            min-width: 120px;
         }
         
         .phone {
             color: #27ae60;
             font-weight: 500;
+            white-space: nowrap;
         }
         
         .website {
@@ -255,6 +260,7 @@
             font-size: 12px;
             font-weight: 600;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .map-btn:hover {
@@ -313,14 +319,35 @@
             color: #666;
         }
         
+        /* 모바일 최적화 */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .search-panel {
+                padding: 30px 20px 20px 20px;
+            }
+            
+            .results-panel {
+                padding: 20px;
+            }
+            
             .filters-row {
                 grid-template-columns: 1fr;
             }
             
             .main-search input {
                 padding: 15px 50px 15px 15px;
-                font-size: 14px;
+                font-size: 16px; /* iOS 줌 방지 */
             }
             
             .search-icon {
@@ -328,14 +355,54 @@
                 font-size: 18px;
             }
             
+            /* 모바일에서 주소 컬럼 숨기기 */
+            .address-col {
+                display: none;
+            }
+            
+            table {
+                min-width: 500px;
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+            
+            .hospital-name {
+                min-width: 100px;
+                font-size: 14px;
+            }
+            
+            .btn {
+                padding: 14px 20px;
+                font-size: 16px; /* 터치 친화적 */
+                margin: 5px;
+            }
+            
+            .map-btn {
+                padding: 8px 10px;
+                font-size: 11px;
+            }
+            
             .pagination {
                 flex-wrap: wrap;
                 gap: 5px;
+                padding: 15px;
             }
             
             .page-btn {
-                padding: 6px 10px;
-                font-size: 12px;
+                padding: 10px 12px;
+                font-size: 14px;
+                min-width: 44px; /* 터치 최소 크기 */
+            }
+            
+            .results-info {
+                padding: 12px 15px;
+            }
+            
+            .results-count {
+                font-size: 14px;
             }
         }
     </style>
@@ -343,7 +410,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>국내 내과/가정의학과 병원 검색</h1>
+            <h1>국내 내과/가정의학과 검색</h1>
             <p id="dataInfo">데이터 로딩 중...</p>
         </div>
         
@@ -574,7 +641,7 @@
                             <th>병원명</th>
                             <th>종별</th>
                             <th>지역</th>
-                            <th>주소</th>
+                            <th class="address-col">주소</th>
                             <th>전화번호</th>
                             <th>의사수</th>
                             <th>홈페이지</th>
@@ -597,11 +664,11 @@
                         <td class="hospital-name">${hospital.요양기관명}</td>
                         <td>${hospital.종별코드명}</td>
                         <td>${hospital.시도코드명} ${hospital.시군구코드명}</td>
-                        <td>${hospital.주소}</td>
+                        <td class="address-col">${hospital.주소}</td>
                         <td class="phone">${hospital.전화번호}</td>
                         <td>${hospital.총의사수 || 0}명</td>
                         <td>${website}</td>
-                        <td><a href="${naverMapUrl}" target="_blank" class="map-btn">네이버 지도</a></td>
+                        <td><a href="${naverMapUrl}" target="_blank" class="map-btn">지도</a></td>
                     </tr>
                 `;
             });
